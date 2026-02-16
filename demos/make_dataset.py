@@ -6,10 +6,11 @@ from constants import FRAME_DELAY_MS, MODEL_PATH
 from src.commons.camera import get_webcam
 from src.commons.converter import prepare_image
 from src.commons.hand_landmarker import get_landmarker
-from src.commons.mediapipe_hand_viz import draw_landmarks_on_image
+from src.commons.mediapipe_hand_viz import (draw_landmarks_on_image,
+                                            print_landmarks)
 
 
-def basic_hand_draw_demo():
+def make_dataset_demo():
     webcam_capture = get_webcam()
     landmarker = get_landmarker(model_path=MODEL_PATH)
 
@@ -26,7 +27,10 @@ def basic_hand_draw_demo():
             image, hand_landmarker_result)
         cv2.imshow('Hand Landmarker Result', annotated_image)
 
-        if cv2.waitKey(FRAME_DELAY_MS) & 0xFF == ord('q'):
+        key = cv2.waitKey(FRAME_DELAY_MS) & 0xFF
+        if key == ord('p'):
+            print_landmarks(hand_landmarker_result, False, False, True)
+        elif key == ord('q'):
             break
 
     webcam_capture.release()
