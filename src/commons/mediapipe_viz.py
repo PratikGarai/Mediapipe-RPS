@@ -1,4 +1,4 @@
-##### Copyright 2023 The MediaPipe Authors. All Rights Reserved.
+# Copyright 2023 The MediaPipe Authors. All Rights Reserved.
 
 # @markdown We implemented some functions to visualize the hand landmark detection results. <br/> Run the following cell to activate the functions.
 import cv2
@@ -15,7 +15,7 @@ FONT_THICKNESS = 1
 HANDEDNESS_TEXT_COLOR = (88, 205, 54)  # vibrant green
 
 
-def draw_landmarks_on_image(rgb_image, detection_result):
+def draw_landmarks_on_image(rgb_image, detection_result, show_handedness=False):
     hand_landmarks_list = detection_result.hand_landmarks
     handedness_list = detection_result.handedness
     annotated_image = np.copy(rgb_image)
@@ -40,9 +40,10 @@ def draw_landmarks_on_image(rgb_image, detection_result):
         text_x = int(min(x_coordinates) * width)
         text_y = int(min(y_coordinates) * height) - MARGIN
 
-        # Draw handedness (left or right hand) on the image.
-        cv2.putText(annotated_image, f"{handedness[0].category_name}",
-                    (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
-                    FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+        if show_handedness:
+            # Draw handedness (left or right hand) on the image.
+            cv2.putText(annotated_image, f"{handedness[0].category_name}",
+                        (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX,
+                        FONT_SIZE, HANDEDNESS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
 
     return annotated_image
