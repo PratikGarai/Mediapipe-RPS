@@ -1,0 +1,1 @@
+Hand Landmark Model location - https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/index#models
