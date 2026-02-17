@@ -2,12 +2,15 @@ import logging
 
 import cv2
 
-from constants import FRAME_DELAY_MS, MODEL_PATH
+from constants import CLASS_LIST, FRAME_DELAY_MS, MODEL_PATH
 from src.commons.camera import get_webcam
 from src.commons.converter import prepare_image
 from src.commons.hand_landmarker import get_landmarker
 from src.commons.mediapipe_hand_viz import (draw_landmarks_on_image,
                                             print_landmarks)
+from src.dataset import HandClassificationRawDataset
+
+dataset = HandClassificationRawDataset("dataset", "hand_dataset01")
 
 
 def make_dataset_demo():
@@ -29,8 +32,17 @@ def make_dataset_demo():
 
         key = cv2.waitKey(FRAME_DELAY_MS) & 0xFF
         if key == ord('p'):
+            logging.info("Command : Print")
             print_landmarks(hand_landmarker_result, False, False, True)
+        elif key == ord('c'):
+            logging.info("Command : Capture")
+            try:
+                dataset.add_datapoint(
+                    image, hand_landmarker_result, CLASS_LIST)
+            except Exception as e:
+                logging.error(e)
         elif key == ord('q'):
+            logging.info("Command : Quit")
             break
 
     webcam_capture.release()
