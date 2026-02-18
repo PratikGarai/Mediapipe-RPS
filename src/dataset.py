@@ -80,5 +80,5 @@ class HandClassificationRawDataset:
         text_to_write = f"{element_id}," + ",".join(map(str, coords)) + "\n"
         with open(self.coords_file, "a") as f:
             f.write(text_to_write)
-        
+
         print("Saved datapoint")

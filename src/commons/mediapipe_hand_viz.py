@@ -1,7 +1,8 @@
+import logging
+
 import cv2
 import mediapipe as mp
 import numpy as np
-import logging
 
 mp_hands = mp.tasks.vision.HandLandmarksConnections
 mp_drawing = mp.tasks.vision.drawing_utils
@@ -47,8 +48,8 @@ def draw_landmarks_on_image(rgb_image, detection_result, show_handedness=False):
     return annotated_image
 
 
-def print_landmarks(hand_landmarker_result, print_handedness : bool = True, print_landmarks : bool = True, print_world_landmarks : bool = True ):
-    if hand_landmarker_result == None :
+def print_landmarks(hand_landmarker_result, print_handedness: bool = True, print_landmarks: bool = True, print_world_landmarks: bool = True):
+    if hand_landmarker_result == None:
         logging.warning("Landmark data none. Returning...")
         return
 
@@ -56,15 +57,15 @@ def print_landmarks(hand_landmarker_result, print_handedness : bool = True, prin
     landmarks = hand_landmarker_result.hand_landmarks
     world_landmarks = hand_landmarker_result.hand_world_landmarks
 
-    if print_landmarks or print_landmarks or print_world_landmarks :
+    if print_landmarks or print_landmarks or print_world_landmarks:
         print("\n\n============================")
         print("Hand Landmarks Data")
-        if print_handedness :
+        if print_handedness:
             print("\nHandedness  ---------------")
             print(handedness)
-        if print_landmarks :
+        if print_landmarks:
             print("\nLandmarks   ---------------")
             print(landmarks)
-        if print_world_landmarks :
+        if print_world_landmarks:
             print("\nW Landmarks ---------------")
             print(world_landmarks)
