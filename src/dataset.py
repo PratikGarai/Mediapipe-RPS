@@ -22,6 +22,7 @@ class HandClassificationRawDataset:
 
         self.images_folder = os.path.join(self.dataset_path, "img_dataset")
         self.coords_file = os.path.join(self.dataset_path, "coords.txt")
+        self.truth_file = os.path.join(self.dataset_path, "truth.txt")
 
         os.makedirs(self.dataset_path, exist_ok=True)
         os.makedirs(self.images_folder, exist_ok=True)
@@ -72,5 +73,12 @@ class HandClassificationRawDataset:
         # Flattened Coordinates Extraction
         coords = extract_flattened_coordinates(world_landmarks)
 
-        # option = self._get_class_selection(classes)
-        # print(option)
+        # Saving data
+        image_path = os.path.join(self.images_folder, f"{element_id}.png")
+        cv2.imwrite(image_path, subimage)
+
+        text_to_write = f"{element_id}," + ",".join(map(str, coords)) + "\n"
+        with open(self.coords_file, "a") as f:
+            f.write(text_to_write)
+        
+        print("Saved datapoint")
