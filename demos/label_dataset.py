@@ -15,7 +15,7 @@ LABEL_MODES = [
     "Label Unlabelled"
 ]
 
-def input_with_options(question : str, options : list[str]) -> str :
+def print_options(question : str, options : list[str]) -> str :
     assert question, "Question cannot be empty"
     assert options, "Options cannot be empty"
     for option in options:
@@ -24,17 +24,18 @@ def input_with_options(question : str, options : list[str]) -> str :
     options_str = "\n".join(f"[{i+1}] {option.capitalize()}" for i, option in enumerate(options))
 
     print(question)
-    while True :
-        try : 
-            print(options_str)
-            inp = int(input())
-            assert inp > 0 and inp < len(options) + 1, "Invalid options index"
-            return options[inp-1]
-        except : 
-            print(f"Invalid option {inp}\n")
+    print(options_str)
 
 def label_dataset_demo():
-    # mode = input_with_options("Label dataset : ", LABEL_MODES)
-    # Full Labelling by default
+    print_options("Lable image :", CLASS_LIST)
     keys = dataset.get_keys()
-    print(keys)
+    for key in keys:
+        try :
+            img = dataset.get_image(key)
+            print(img.shape)
+        except Exception as e :
+            logging.error(f"Error loading image {key} : {e}. Skipping...")
+            continue
+        cv2.imshow("Image", img)
+        choice = cv2.waitKey(1) & 0xFF
+        cv2.destroyAllWindows()

@@ -94,3 +94,11 @@ class HandClassificationRawDataset:
                     logging.warning(f"Error processing line {i} : {line}")
 
         return keys
+
+    def get_image(self, element_id : str) -> ndarray:
+        assert element_id, "Requested element_id is empty"
+        image_path = os.path.join(self.images_folder, f"{element_id}.png")
+        assert os.path.exists(image_path), f"Image path {image_path} does not exist"
+
+        img = cv2.imread(image_path)
+        return img
