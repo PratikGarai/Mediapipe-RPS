@@ -2,7 +2,7 @@ import logging
 
 import cv2
 
-from constants import CLASS_LIST, FRAME_DELAY_MS, MODEL_PATH
+from constants import FRAME_DELAY_MS, MODEL_PATH
 from src.commons.camera import get_webcam
 from src.commons.converter import prepare_image
 from src.commons.hand_landmarker import get_landmarker
@@ -38,7 +38,7 @@ def make_dataset_demo():
             logging.info("Command : Capture")
             try:
                 dataset.add_datapoint(
-                    image, hand_landmarker_result, CLASS_LIST)
+                    image, hand_landmarker_result)
             except Exception as e:
                 logging.error(e)
         elif key == ord('q'):

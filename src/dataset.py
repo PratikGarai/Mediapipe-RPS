@@ -1,3 +1,4 @@
+import logging
 import os
 from uuid import uuid4
 
@@ -45,12 +46,10 @@ class HandClassificationRawDataset:
         except:
             print("Invalid option selected.")
 
-    def add_datapoint(self, image: ndarray, hand_landmarker_result, classes: list[str] = []):
+    def add_datapoint(self, image: ndarray, hand_landmarker_result):
         assert image is not None, "Image cannot be null"
         assert image is not ndarray, "Image has to be an ndarray"
         assert hand_landmarker_result is not None, "Hand landmarker result cannot be null"
-        assert classes is not None and len(
-            classes) != 0, "Classes list cannot be empty or None"
 
         try:
             validated_landmarker_result = HandLandmarkerResult(
@@ -82,3 +81,16 @@ class HandClassificationRawDataset:
             f.write(text_to_write)
 
         print("Saved datapoint")
+
+    def get_keys(self) -> list[str]:
+        assert os.path.exists(self.coords_file), "Coords file not found"
+        keys = []
+        with open(self.coords_file, "r") as f:
+            lines = f.readlines()
+            for i, line in enumerate(lines):
+                try:
+                    keys.append(str(line.split(",")[0]))
+                except:
+                    logging.warning(f"Error processing line {i} : {line}")
+
+        return keys
