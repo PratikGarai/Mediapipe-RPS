@@ -1,3 +1,5 @@
+"""Provide an interactive workflow for capturing hand dataset samples."""
+
 import logging
 
 import cv2
@@ -14,6 +16,7 @@ dataset = HandClassificationRawDataset("dataset", "hand_dataset01")
 
 
 def make_dataset_demo():
+    """Run webcam capture loop and handle print/capture/quit commands."""
     webcam_capture = get_webcam()
     landmarker = get_landmarker(model_path=MODEL_PATH)
 

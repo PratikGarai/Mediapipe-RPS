@@ -1,3 +1,5 @@
+"""Provide CLI entrypoints for project demos."""
+
 import logging
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 

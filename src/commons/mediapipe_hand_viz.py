@@ -1,3 +1,5 @@
+"""Visualize and print MediaPipe hand landmark outputs."""
+
 import logging
 
 import cv2
@@ -14,7 +16,21 @@ FONT_THICKNESS = 1
 HANDEDNESS_TEXT_COLOR = (88, 205, 54)  # vibrant green
 
 
-def draw_landmarks_on_image(rgb_image, detection_result, show_handedness=False):
+def draw_landmarks_on_image(
+    rgb_image,
+    detection_result,
+    show_handedness: bool = False,
+):
+    """Draw detected hand landmarks and optional handedness labels.
+
+    Args:
+        rgb_image: Input RGB image to annotate.
+        detection_result: MediaPipe hand detection result object.
+        show_handedness: Whether to render left/right labels per hand.
+
+    Returns:
+        Annotated image copy with landmarks and optional labels.
+    """
     hand_landmarks_list = detection_result.hand_landmarks
     handedness_list = detection_result.handedness
     annotated_image = np.copy(rgb_image)
@@ -48,7 +64,20 @@ def draw_landmarks_on_image(rgb_image, detection_result, show_handedness=False):
     return annotated_image
 
 
-def print_landmarks(hand_landmarker_result, print_handedness: bool = True, print_landmarks: bool = True, print_world_landmarks: bool = True):
+def print_landmarks(
+    hand_landmarker_result,
+    print_handedness: bool = True,
+    print_landmarks: bool = True,
+    print_world_landmarks: bool = True,
+) -> None:
+    """Print selected sections of hand landmark data to stdout.
+
+    Args:
+        hand_landmarker_result: MediaPipe hand detection result object.
+        print_handedness: Whether to print handedness metadata.
+        print_landmarks: Whether to print normalized landmarks.
+        print_world_landmarks: Whether to print world-space landmarks.
+    """
     if hand_landmarker_result == None:
         logging.warning("Landmark data none. Returning...")
         return

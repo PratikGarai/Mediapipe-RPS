@@ -1,3 +1,5 @@
+"""Run a basic webcam demo that overlays detected hand landmarks."""
+
 import logging
 
 import cv2
@@ -10,6 +12,7 @@ from src.commons.mediapipe_hand_viz import draw_landmarks_on_image
 
 
 def basic_hand_draw_demo():
+    """Launch the live hand landmark visualization demo."""
     webcam_capture = get_webcam()
     landmarker = get_landmarker(model_path=MODEL_PATH)
 

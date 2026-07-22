@@ -1,3 +1,5 @@
+"""Define shared constants for model paths, timing, and class labels."""
+
 import os
 
 MODEL_PATH = os.path.join(os.getcwd(), "models", "hand_landmarker.task")

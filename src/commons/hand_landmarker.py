@@ -1,3 +1,5 @@
+"""Provide MediaPipe hand-landmarker creation and data extraction helpers."""
+
 import cv2
 import mediapipe as mp
 from numpy import ndarray
@@ -5,7 +7,15 @@ from numpy import ndarray
 from constants import FRAME_EXTRACTION_PADDING, MAX_INT
 
 
-def get_landmarker(model_path: str = None):
+def get_landmarker(model_path: str | None = None):
+    """Create a configured MediaPipe hand landmarker instance.
+
+    Args:
+        model_path: Filesystem path to the hand landmarker task model.
+
+    Returns:
+        Configured MediaPipe hand landmarker.
+    """
 
     assert model_path is not None, "Model path must be provided."
 
@@ -24,6 +34,14 @@ def get_landmarker(model_path: str = None):
 
 class HandLandmarkerResult:
     def __init__(self, hand_landmarker_result):
+        """Normalize raw MediaPipe result objects into convenient fields.
+
+        Args:
+            hand_landmarker_result: Raw result returned by MediaPipe detector.
+
+        Raises:
+            Exception: Raised when expected fields are missing.
+        """
         self.handedness = None
         self.landmarks = None
         self.world_landmarks = None
@@ -49,7 +67,16 @@ class HandLandmarkerResult:
         self.world_landmarks = self.world_landmarks[0]
 
 
-def extract_hand_image_slice(image: ndarray, landmarks):
+def extract_hand_image_slice(image: ndarray, landmarks) -> ndarray:
+    """Crop and resize a hand region based on normalized landmarks.
+
+    Args:
+        image: Source image containing the hand.
+        landmarks: Iterable landmark objects with normalized x/y coordinates.
+
+    Returns:
+        Resized hand crop image with shape 128x128.
+    """
     minx = MAX_INT
     maxx = -MAX_INT
     miny = MAX_INT
@@ -73,10 +100,29 @@ def extract_hand_image_slice(image: ndarray, landmarks):
     return subimage
 
 
-def extract_flattened_coordinates(landmarks, extract_x: bool = True, extract_y: bool = True, extract_z: bool = True):
+def extract_flattened_coordinates(
+    landmarks,
+    extract_x: bool = True,
+    extract_y: bool = True,
+    extract_z: bool = True,
+) -> list[float]:
+    """Flatten landmark coordinates into a single numeric list.
+
+    Args:
+        landmarks: Iterable landmark objects containing x, y, and z values.
+        extract_x: Whether to include x values in the output.
+        extract_y: Whether to include y values in the output.
+        extract_z: Whether to include z values in the output.
+
+    Returns:
+        Flattened coordinate list in landmark iteration order.
+    """
     results = []
     for landmark in landmarks:
-        results.append(landmark.x)
-        results.append(landmark.y)
-        results.append(landmark.z)
+        if extract_x:
+            results.append(landmark.x)
+        if extract_y:
+            results.append(landmark.y)
+        if extract_z:
+            results.append(landmark.z)
     return results
