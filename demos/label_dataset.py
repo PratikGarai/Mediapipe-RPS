@@ -4,47 +4,51 @@ import logging
 
 import cv2
 
-from constants import CLASS_LIST, FRAME_DELAY_MS, MODEL_PATH
-from src.commons.converter import prepare_image
-from src.commons.mediapipe_hand_viz import (draw_landmarks_on_image,
-                                            print_landmarks)
 from src.dataset import HandClassificationRawDataset
+from src.utils import generate_options_string
 
 dataset = HandClassificationRawDataset("dataset", "hand_dataset01")
 
-LABEL_MODES = [
-    "Full Label",
-    "Label Unlabelled"
-]
-
-def print_options(question: str, options: list[str]) -> None:
-    """Print a question and numbered options to the console.
-
-    Args:
-        question: Prompt text shown above options.
-        options: Available option labels in display order.
-    """
-    assert question, "Question cannot be empty"
-    assert options, "Options cannot be empty"
-    for option in options:
-        assert option, "Option cannot be empty"
-
-    options_str = "\n".join(f"[{i+1}] {option.capitalize()}" for i, option in enumerate(options))
-
-    print(question)
-    print(options_str)
 
 def label_dataset_demo() -> None:
     """Iterate dataset images and capture key-based labeling input."""
-    print_options("Lable image :", CLASS_LIST)
+    class_len = len(dataset.classes)
+    questionare = generate_options_string("Label image :", dataset.classes)
+    print(questionare)
+
     keys = dataset.get_keys()
+    existing_truth = dataset.get_existing_truth_data()
+    new_truth = {}
+
+    cv2.namedWindow("Image")
+
     for key in keys:
-        try :
+        try:
             img = dataset.get_image(key)
-            print(img.shape)
-        except Exception as e :
+        except Exception as e:
             logging.error(f"Error loading image {key} : {e}. Skipping...")
             continue
         cv2.imshow("Image", img)
-        choice = cv2.waitKey(1) & 0xFF
-        cv2.destroyAllWindows()
+
+        while True:
+            if key in existing_truth:
+                print(f"Existing mapping for image : ",
+                      dataset.classes[existing_truth[key]-1])
+            print("Enter new mapping : ", end="")
+            choice = cv2.waitKey(0)
+
+            if choice & 0xFF == ord('q'):
+                print("Breaking out of loop")
+                cv2.destroyAllWindows()
+                return
+
+            index = choice - ord("1")
+            if 0 <= index < class_len:
+                print(f"Selected option : {dataset.classes[index]}")
+                new_truth[key] = index + 1
+                break
+            else:
+                print(f"Unrecognized key: {choice}")
+    
+    cv2.destroyAllWindows()
+    dataset.update_truth(new_truth)

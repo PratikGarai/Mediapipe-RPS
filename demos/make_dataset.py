@@ -5,12 +5,11 @@ import logging
 import cv2
 
 from constants import FRAME_DELAY_MS, MODEL_PATH
-from src.commons.camera import get_webcam
-from src.commons.converter import prepare_image
-from src.commons.hand_landmarker import get_landmarker
-from src.commons.mediapipe_hand_viz import (draw_landmarks_on_image,
-                                            print_landmarks)
+from src.camera import get_webcam
+from src.converter import prepare_image
 from src.dataset import HandClassificationRawDataset
+from src.hand_landmarker import get_landmarker
+from src.mediapipe_hand_viz import draw_landmarks_on_image, print_landmarks
 
 dataset = HandClassificationRawDataset("dataset", "hand_dataset01")
 

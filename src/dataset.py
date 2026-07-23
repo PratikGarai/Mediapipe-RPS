@@ -2,15 +2,16 @@
 
 import logging
 import os
+from pathlib import Path
 from uuid import uuid4
 
 import cv2
 from numpy import ndarray
 
-from constants import FRAME_DELAY_MS
-from src.commons.hand_landmarker import (HandLandmarkerResult,
-                                         extract_flattened_coordinates,
-                                         extract_hand_image_slice)
+from constants import CLASS_LIST
+from src.hand_landmarker import (HandLandmarkerResult,
+                                 extract_flattened_coordinates,
+                                 extract_hand_image_slice)
 
 
 class HandClassificationRawDataset:
@@ -24,6 +25,8 @@ class HandClassificationRawDataset:
         assert dataset_root_path, "Dataset needs a root path"
         assert dataset_name, "Dataset needs a name"
 
+        self.classes = CLASS_LIST
+
         self.dataset_root_path = dataset_root_path
         self.dataset_name = dataset_name
         self.dataset_path = os.path.join(
@@ -35,32 +38,8 @@ class HandClassificationRawDataset:
 
         os.makedirs(self.dataset_path, exist_ok=True)
         os.makedirs(self.images_folder, exist_ok=True)
-
-    def _get_class_selection(self, classes: list[str]) -> str:
-        """Return a class label selected through a numeric keypress.
-
-        Args:
-            classes: Ordered list of selectable class names.
-
-        Returns:
-            Selected class name.
-        """
-        assert classes is not None and len(
-            classes) != 0, "Classes list cannot be empty or None"
-
-        options_str = ""
-        for i, c in enumerate(classes):
-            options_str += f"[{i}] {c}\n"
-        print(options_str)
-        print("Select data class : ")
-        key = cv2.waitKey(FRAME_DELAY_MS) & 0xFF
-        try:
-            key = key - ord('0')
-            choice = int(key)
-            assert choice > 0 and choice < len(classes+1)
-            return classes[choice-1]
-        except:
-            print("Invalid option selected.")
+        Path(self.coords_file).touch(exist_ok=True)
+        Path(self.truth_file).touch(exist_ok=True)
 
     def add_datapoint(self, image: ndarray, hand_landmarker_result) -> None:
         """Extract and persist a single image/coordinate datapoint.
@@ -136,7 +115,40 @@ class HandClassificationRawDataset:
         """
         assert element_id, "Requested element_id is empty"
         image_path = os.path.join(self.images_folder, f"{element_id}.png")
-        assert os.path.exists(image_path), f"Image path {image_path} does not exist"
+        assert os.path.exists(
+            image_path), f"Image path {image_path} does not exist"
 
         img = cv2.imread(image_path)
         return img
+
+    def get_existing_truth_data(self) -> dict[str, int]:
+        keys = set(self.get_keys())
+        lines = []
+        with open(self.truth_file, "r+") as f:
+            lines = f.readlines()
+
+        res = {}
+        for ln in lines:
+            splits = ln.split(",")
+            assert len(splits) == 2, f"Line {ln} is of incorrect format"
+            key, cat = splits[0], splits[1]
+
+            try:
+                cat = int(cat)
+            except:
+                raise f"Value {cat} cannot be converted to int"
+
+            assert key in keys, f"Key {key} not in the list of keys in the dataset"
+
+            res[key] = cat
+        return res
+
+    def update_truth(self, truth: dict[str, int]) -> None:
+        truth_content = ""
+        keys = self.get_keys()
+        for key in keys:
+            assert key in truth, f"Key {key} not present in updated truth"
+            truth_content += f"{key},{truth[key]}\n"
+
+        with open(self.truth_file, "w+") as f:
+            f.write(truth_content)
