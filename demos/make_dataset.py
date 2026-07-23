@@ -14,7 +14,7 @@ from src.mediapipe_hand_viz import draw_landmarks_on_image, print_landmarks
 dataset = HandClassificationRawDataset("dataset", "hand_dataset01")
 
 
-def make_dataset_demo():
+def make_dataset_demo() -> None:
     """Run webcam capture loop and handle print/capture/quit commands."""
     webcam_capture = get_webcam()
     landmarker = get_landmarker(model_path=MODEL_PATH)

@@ -46,13 +46,16 @@ if __name__ == "__main__":
     args = cli.parse_args()
     operation = args.operation
     logging.info(f"Captured operation : {operation}")
-    handler = None
+    operation_handler = None
+    operation_name = ""
 
     for op in OPERATIONS:
         if op["slug"] == operation:
-            logging.info(f"Launching {op["name"]}...")
-            handler = op["handler"]
+            operation_name = op["name"]
+            operation_handler = op["handler"]
             break
 
-    if handler is not None:
-        handler()
+    if operation_handler is not None:
+        logging.info(f"Launching {operation_name}...")
+        operation_handler()
+        logging.info(f"Completed operation {operation_name}")

@@ -33,6 +33,8 @@ def get_landmarker(model_path: str | None = None):
 
 
 class HandLandmarkerResult:
+    """Normalize a raw MediaPipe hand result into single-hand fields."""
+
     def __init__(self, hand_landmarker_result):
         """Normalize raw MediaPipe result objects into convenient fields.
 

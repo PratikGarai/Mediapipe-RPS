@@ -1,9 +1,15 @@
+"""Provide helpers for building user-facing prompt strings."""
+
+
 def generate_options_string(question: str, options: list[str]) -> str:
     """Generate a string with a question and numbered options.
 
     Args:
         question: Prompt text shown above options.
         options: Available option labels in display order.
+
+    Returns:
+        Combined prompt with the question followed by numbered options.
     """
     assert question, "Question cannot be empty"
     assert options, "Options cannot be empty"

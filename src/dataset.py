@@ -15,6 +15,8 @@ from src.hand_landmarker import (HandLandmarkerResult,
 
 
 class HandClassificationRawDataset:
+    """Store and retrieve raw hand-classification image and coordinate data."""
+
     def __init__(self, dataset_root_path: str, dataset_name: str):
         """Initialize dataset folders and file paths.
 
@@ -122,6 +124,14 @@ class HandClassificationRawDataset:
         return img
 
     def get_existing_truth_data(self) -> dict[str, int]:
+        """Read the stored truth file into a datapoint-to-class mapping.
+
+        Returns:
+            Mapping of datapoint ID to its integer class label.
+
+        Raises:
+            Exception: Raised when a truth value cannot be parsed as an integer.
+        """
         keys = set(self.get_keys())
         lines = []
         with open(self.truth_file, "r+") as f:
@@ -144,6 +154,11 @@ class HandClassificationRawDataset:
         return res
 
     def update_truth(self, truth: dict[str, int]) -> None:
+        """Overwrite the truth file with the provided label mapping.
+
+        Args:
+            truth: Mapping of datapoint ID to its integer class label.
+        """
         truth_content = ""
         keys = self.get_keys()
         for key in keys:

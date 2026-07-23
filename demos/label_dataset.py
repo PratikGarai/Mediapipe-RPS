@@ -38,7 +38,7 @@ def label_dataset_demo() -> None:
             choice = cv2.waitKey(0)
 
             if choice & 0xFF == ord('q'):
-                print("Breaking out of loop")
+                logging.warning("Breaking out of loop")
                 cv2.destroyAllWindows()
                 return
 
@@ -48,7 +48,7 @@ def label_dataset_demo() -> None:
                 new_truth[key] = index + 1
                 break
             else:
-                print(f"Unrecognized key: {choice}")
-    
+                logging.warning(f"Unrecognized key: {choice}")
+
     cv2.destroyAllWindows()
     dataset.update_truth(new_truth)

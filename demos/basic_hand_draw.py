@@ -11,7 +11,7 @@ from src.hand_landmarker import get_landmarker
 from src.mediapipe_hand_viz import draw_landmarks_on_image
 
 
-def basic_hand_draw_demo():
+def basic_hand_draw_demo() -> None:
     """Launch the live hand landmark visualization demo."""
     webcam_capture = get_webcam()
     landmarker = get_landmarker(model_path=MODEL_PATH)
@@ -30,6 +30,7 @@ def basic_hand_draw_demo():
         cv2.imshow('Hand Landmarker Result', annotated_image)
 
         if cv2.waitKey(FRAME_DELAY_MS) & 0xFF == ord('q'):
+            logging.warning("Quit signal captured. Breaking...")
             break
 
     webcam_capture.release()
